@@ -11,7 +11,7 @@ import {
 } from "../errors.js";
 import { config } from "../config.js";
 import { logger } from "../logger.js";
-import { computeLoanTerms, formatKes, genRef } from "../utils.js";
+import { computeLoanTerms, formatKes, genRef, formatPhone } from "../utils.js";
 
 // =============== Validation schemas ===============
 

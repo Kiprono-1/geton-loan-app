@@ -183,13 +183,13 @@ export async function verifyPayment(
     try {
       const paystackStatus = await paystack.verifyTransaction(reference);
 
-      if (paystackStatus.status === "success" && intent.status !== "success") {
+      if (paystackStatus.status === "success" && (intent.status as string) !== "success") {
         // Manually process the success (webhook may be delayed)
         await handleChargeSuccess({
           reference,
           amount: paystackStatus.amount,
           channel: paystackStatus.channel,
-          paidAt: paystackStatus.paidAt,
+          paid_at: paystackStatus.paidAt,
           customer: paystackStatus.customer,
           metadata: paystackStatus.metadata,
         });
