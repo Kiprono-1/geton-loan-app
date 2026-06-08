@@ -1,0 +1,25 @@
+{
+  "name": "GETON Kenya — Instant Loans",
+  "short_name": "GETON",
+  "description": "Borrow KSh 2,500 to KSh 250,000 instantly to your M-Pesa. CBK licensed.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F0A2E",
+  "theme_color": "#0a7d56",
+  "categories": ["finance", "business"],
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

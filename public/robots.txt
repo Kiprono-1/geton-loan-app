@@ -1,0 +1,124 @@
+# GETON Kenya — robots.txt
+# https://geton.co.ke/robots.txt
+# Last updated: 2026-06-15
+
+# =============== GENERAL RULES ===============
+
+User-agent: *
+# Allow all pages by default
+Allow: /
+
+# Disallow admin, internal, and dev paths
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+Disallow: /_/
+Disallow: /.env
+Disallow: /config/
+Disallow: /internal/
+Disallow: /*.json$
+Disallow: /*.xml$
+Disallow: /*?*
+Disallow: /search
+Disallow: /logout
+Disallow: /reset-password
+Disallow: /change-password
+Disallow: /verify-phone
+
+# Crawl-delay (be polite to our servers)
+Crawl-delay: 1
+
+# =============== SPECIFIC BOTS ===============
+
+# Google
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Crawl-delay: 0
+
+# Google Image Bot
+User-agent: Googlebot-Image
+Allow: /
+Crawl-delay: 0
+
+# Google News
+User-agent: Googlebot-News
+Allow: /news/
+Allow: /blog/
+Crawl-delay: 0
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+Crawl-delay: 1
+
+# Yahoo
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 1
+
+# Baidu
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 2
+
+# Yandex
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 1
+
+# Apple
+User-agent: Applebot
+Allow: /
+Crawl-delay: 0
+
+# AI bots (be selective — only allow summarization, not training)
+User-agent: GPTBot
+Allow: /
+Disallow: /private/
+Disallow: /api/
+Crawl-delay: 5
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# =============== SITEMAPS ===============
+
+Sitemap: https://geton.co.ke/sitemap.xml
+Sitemap: https://geton.co.ke/sitemap-news.xml
+
+# =============== HOST ===============
+
+Host: https://geton.co.ke

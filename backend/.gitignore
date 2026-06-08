@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Production builds
+dist/
+
+# Local env files — NEVER commit secrets!
+.env
+.env.local
+.env.production
+
+# Database
+*.db
+*.db-journal
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Prisma generated client
+src/generated/prisma/
+
+# OS files
+.DS_Store
+Thumbs.db

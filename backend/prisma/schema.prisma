@@ -1,0 +1,299 @@
+// GETON Kenya — Prisma schema
+// Models: User, KYC, Loan, ActivationFee, Transaction, Notification,
+// PaymentIntent, AuditLog, RefreshToken, CsbReport, Device
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // ============================================================
+  // DATABASE — Production: Supabase PostgreSQL
+  // For local dev: change to provider = "sqlite" and use
+  // DATABASE_URL="file:./dev.db"
+  // ============================================================
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============== USERS & AUTH ===============
+
+model User {
+  id            String   @id @default(cuid())
+  fullName      String
+  email         String   @unique
+  phone         String   @unique
+  passwordHash  String
+  pinHash       String?  // 4-digit transaction PIN
+  role          String   @default("user") // user, admin, compliance, support
+  kycLevel      Int      @default(1) // 1=basic, 2=verified, 3=premium
+  kycStatus     String   @default("pending") // pending, in_review, approved, rejected
+  creditScore   Int      @default(0)
+  walletBalance Int      @default(0) // in KES
+  loanLimit     Int      @default(50000) // KSh 50,000
+  isActive      Boolean  @default(true)
+  isBlocked     Boolean  @default(false)
+  blockReason   String?
+  lastLoginAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  kyc               KYC?
+  loans             Loan[]
+  transactions      Transaction[]
+  notifications     Notification[]
+  paymentIntents    PaymentIntent[]
+  refreshTokens     RefreshToken[]
+  auditLogs         AuditLog[]
+  devices           Device[]
+
+  @@index([phone])
+  @@index([email])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  device    String?
+  ip        String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Device {
+  id         String   @id @default(cuid())
+  userId     String
+  deviceId   String   // from mobile
+  name       String
+  os         String
+  ip         String
+  location   String?
+  lastActive DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([deviceId])
+}
+
+// =============== KYC ===============
+
+model KYC {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  fullName     String
+  nationalId   String?  @unique
+  idFrontUrl   String?
+  idBackUrl    String?
+  selfieUrl    String?
+  kraPin       String?  @unique
+  mpesaNumber  String?
+  bankName     String?
+  bankAccount  String?
+  addressLine  String?
+  city         String?
+  county       String?
+  status       String   @default("pending") // pending, in_review, approved, rejected
+  rejectionReason String?
+  reviewedAt   DateTime?
+  reviewedBy   String?
+  submittedAt  DateTime @default(now())
+  approvedAt   DateTime?
+  metadata     String?  // JSON — extra docs, address proof URL, etc.
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([nationalId])
+  @@index([kraPin])
+}
+
+// =============== LOANS ===============
+
+model Loan {
+  id              String   @id @default(cuid())
+  userId          String
+  amount          Int      // KES
+  tenure          Int      // months
+  purpose         String
+  interestRate    Float    // % per month
+  monthlyPayment  Int      // KES
+  totalInterest   Int
+  totalRepayment  Int
+  amountPaid      Int      @default(0)
+  amountRemaining Int
+  activationFee   Int      @default(0) // computed fee stored at loan creation
+  status          String   @default("pending") // pending, fees-required, approved, active, repaid, defaulted, rejected
+  rejectionReason String?
+  activationFeePaid Boolean @default(false)
+  disbursedAt     DateTime?
+  disbursementRef String?
+  nextPaymentAt   DateTime?
+  lastPaymentAt   DateTime?
+  paidAt          DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fees        ActivationFee[]
+  payments    LoanPayment[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model ActivationFee {
+  id        String   @id @default(cuid())
+  loanId    String
+  type      String   // processing, insurance, verification
+  amount    Int
+  paidAt    DateTime @default(now())
+  reference String   @unique
+  channel   String   // mpesa-stk, paybill, manual
+
+  loan Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+
+  @@index([loanId])
+}
+
+model LoanPayment {
+  id        String   @id @default(cuid())
+  loanId    String
+  amount    Int
+  principal Int
+  interest  Int
+  penalty   Int      @default(0)
+  paidAt    DateTime @default(now())
+  reference String   @unique
+  channel   String
+  status    String   @default("successful")
+
+  loan Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+
+  @@index([loanId])
+}
+
+// =============== TRANSACTIONS ===============
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // fee, disbursement, repayment, deposit, withdrawal, refund
+  description String
+  amount      Int
+  status      String   @default("pending") // pending, successful, failed
+  reference   String   @unique
+  channel     String?  // mpesa-stk, paybill, bank-transfer, manual
+  metadata    String?  // JSON
+  balanceAfter Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([reference])
+}
+
+// =============== PAYMENT INTENTS (STK Push) ===============
+
+model PaymentIntent {
+  id            String   @id @default(cuid())
+  userId        String
+  amount        Int
+  type          String   // activation-fee, loan-repayment, deposit
+  reference     String   @unique
+  phone         String
+  channel       String   @default("mpesa-stk")
+
+  // Paystack
+  paystackRef     String?  @unique
+  authorizationUrl String?
+  accessCode      String?
+
+  status        String   @default("pending") // pending, success, failed, abandoned
+  failureReason String?
+  metadata      String?  // JSON
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  completedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([reference])
+  @@index([paystackRef])
+}
+
+// =============== NOTIFICATIONS ===============
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("info") // info, success, warning, alert
+  category  String?  // loan, payment, kyc, system
+  link      String?
+  isRead    Boolean  @default(false)
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+// =============== AUDIT LOG ===============
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String?
+  entityId  String?
+  ip        String?
+  userAgent String?
+  metadata  String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// =============== WEBHOOK EVENTS (Paystack) ===============
+
+model WebhookEvent {
+  id           String   @id @default(cuid())
+  provider     String   // paystack
+  event        String   // charge.success, transfer.success, etc
+  reference    String?
+  payload      String   // raw JSON
+  processed    Boolean  @default(false)
+  processedAt  DateTime?
+  error        String?
+  receivedAt   DateTime @default(now())
+
+  @@index([provider, event])
+  @@index([reference])
+  @@index([processed])
+}

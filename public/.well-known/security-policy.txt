@@ -1,0 +1,52 @@
+# GETON Kenya — Security Policy
+
+## Reporting a Vulnerability
+
+If you've discovered a security vulnerability in GETON, please report it
+privately so we can fix it before public disclosure.
+
+### How to report
+
+**Email:** security@geton.co.ke (PGP key: https://geton.co.ke/pgp-key.txt)
+**Web form:** https://geton.co.ke/security/report
+**Phone:** +254 709 123 457 (ask for the Security Team)
+
+### What to include
+
+- A clear description of the vulnerability
+- Steps to reproduce
+- Affected URLs/parameters
+- Screenshots or proof-of-concept (if available)
+- Your name (for credit) — or anonymous if you prefer
+
+### Our commitment
+
+- We will acknowledge your report within **24 hours**
+- We will provide a timeline for a fix within **72 hours**
+- We will credit you in our acknowledgments page (if you wish)
+- We will notify you when the issue is fixed
+- We follow **coordinated disclosure** — please give us 90 days before public disclosure
+
+### Bug Bounty
+
+We run a paid bug bounty program. Rewards range from KSh 5,000 to KSh 500,000
+depending on severity. See https://geton.co.ke/bug-bounty for details.
+
+### Out of scope
+
+- Denial of service (DoS) attacks
+- Social engineering of our staff
+- Physical attacks on our offices
+- Self-XSS or clickjacking on unauthenticated pages
+- Reports from automated scanners without PoC
+- Issues in third-party services we use (Paystack, M-Pesa)
+
+### Safe harbor
+
+We will not pursue legal action against researchers who:
+- Make a good-faith effort to avoid privacy violations
+- Only access data necessary to demonstrate the vulnerability
+- Do not exploit the vulnerability beyond what's needed to prove it
+- Report it to us first and allow reasonable time to fix
+
+Thank you for helping keep GETON and our 2 million+ users safe.

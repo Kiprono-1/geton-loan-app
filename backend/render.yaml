@@ -1,0 +1,56 @@
+# Render Blueprint — GETON Kenya API
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: geton-api
+    runtime: node
+    region: frankfurt
+    plan: starter
+    rootDir: backend
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Replace these with your actual values
+      - key: API_URL
+        value: https://geton-api.onrender.com
+      - key: FRONTEND_URL
+        value: https://geton.co.ke
+      - key: DATABASE_URL
+        sync: false  # Set this in Render dashboard with your Supabase connection string
+      - key: JWT_SECRET
+        generateValue: true  # Render auto-generates a secure secret
+      - key: JWT_REFRESH_SECRET
+        generateValue: true  # Separate secret for refresh tokens
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: REFRESH_TOKEN_EXPIRES_IN
+        value: 30d
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: PAYSTACK_PUBLIC_KEY
+        sync: false
+      - key: PAYSTACK_WEBHOOK_SECRET
+        sync: false
+      - key: AT_API_KEY
+        sync: false
+      - key: AT_USERNAME
+        value: geton_co_ke
+      - key: AT_SENDER_ID
+        value: GETON
+      - key: LOG_LEVEL
+        value: info
+    healthCheck:
+      enabled: true
+      path: /api/health
+      intervalSeconds: 30
+      timeoutSeconds: 5
+      unhealthyThreshold: 3
+      healthyThreshold: 2

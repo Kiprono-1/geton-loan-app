@@ -1,0 +1,20 @@
+# GETON Kenya — Security Contact
+# https://geton.co.ke/.well-known/security.txt
+# Conforms to https://securitytxt.org/
+
+Contact: https://geton.co.ke/security
+Contact: mailto:security@geton.co.ke
+Contact: tel:+254-709-123-457
+
+Encryption: https://geton.co.ke/pgp-key.txt
+Preferred-Languages: en, sw
+Canonical: https://geton.co.ke/.well-known/security.txt
+
+# Where to report security issues
+Hiring: https://geton.co.ke/careers/security
+Acknowledgments: https://geton.co.ke/security/acknowledgments
+
+# We follow responsible disclosure
+Policy: https://geton.co.ke/security/policy
+Preferred-Languages: en, sw
+Expires: 2027-12-31T23:59:59z
