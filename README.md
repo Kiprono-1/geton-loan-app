@@ -126,3 +126,4 @@ See [backend/README.md](backend/README.md) for the full deployment guide.
 ## 📜 License
 
 Proprietary — © 2026 GETON Financial Services Ltd. — Licensed by CBK.
+# GETON-MAIN
