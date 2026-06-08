@@ -218,7 +218,7 @@ export async function login(req: Request, res: Response): Promise<void> {
         userId: user.id,
         deviceId: (req.headers["x-device-id"] as string) || req.ip || "unknown",
       },
-    },
+    } as any,
     create: {
       userId: user.id,
       deviceId: (req.headers["x-device-id"] as string) || req.ip || "unknown",
@@ -318,7 +318,7 @@ export async function changePassword(
     message:
       "Your password was successfully changed. If this wasn't you, contact support immediately.",
     type: "warning",
-    category: "security",
+    category: "system" as any,
   });
 
   res.json({ success: true });

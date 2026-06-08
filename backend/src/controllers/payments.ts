@@ -189,7 +189,7 @@ export async function verifyPayment(
           reference,
           amount: paystackStatus.amount,
           channel: paystackStatus.channel,
-          paid_at: paystackStatus.paidAt,
+          paid_at: paystackStatus.paidAt ?? undefined,
           customer: paystackStatus.customer,
           metadata: paystackStatus.metadata,
         });
